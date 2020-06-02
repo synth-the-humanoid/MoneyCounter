@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_moneycounter" default="compile.module.moneycounter">
+  <dirname property="module.moneycounter.basedir" file="${ant.file.module_moneycounter}"/>
+  
+  <property name="module.jdk.home.moneycounter" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.moneycounter" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.moneycounter" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.moneycounter" value="-encoding UTF-8 -source 11 -target 11 ${compiler.args}"/>
+  
+  <property name="moneycounter.output.dir" value="${module.moneycounter.basedir}/out/production/MoneyCounter"/>
+  <property name="moneycounter.testoutput.dir" value="${module.moneycounter.basedir}/out/test/MoneyCounter"/>
+  
+  <path id="moneycounter.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="moneycounter.module.production.classpath">
+    <path refid="${module.jdk.classpath.moneycounter}"/>
+  </path>
+  
+  <path id="moneycounter.runtime.production.module.classpath">
+    <pathelement location="${moneycounter.output.dir}"/>
+  </path>
+  
+  <path id="moneycounter.module.classpath">
+    <path refid="${module.jdk.classpath.moneycounter}"/>
+    <pathelement location="${moneycounter.output.dir}"/>
+  </path>
+  
+  <path id="moneycounter.runtime.module.classpath">
+    <pathelement location="${moneycounter.testoutput.dir}"/>
+    <pathelement location="${moneycounter.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.moneycounter">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.moneycounter">
+    <patternset refid="excluded.from.module.moneycounter"/>
+  </patternset>
+  
+  <path id="moneycounter.module.sourcepath">
+    <dirset dir="${module.moneycounter.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.moneycounter" depends="compile.module.moneycounter.production,compile.module.moneycounter.tests" description="Compile module MoneyCounter"/>
+  
+  <target name="compile.module.moneycounter.production" depends="register.custom.compilers" description="Compile module MoneyCounter; production classes">
+    <mkdir dir="${moneycounter.output.dir}"/>
+    <javac2 destdir="${moneycounter.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.moneycounter}/javac">
+      <compilerarg line="${compiler.args.moneycounter}"/>
+      <bootclasspath refid="moneycounter.module.bootclasspath"/>
+      <classpath refid="moneycounter.module.production.classpath"/>
+      <src refid="moneycounter.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.moneycounter"/>
+    </javac2>
+    
+    <copy todir="${moneycounter.output.dir}">
+      <fileset dir="${module.moneycounter.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.moneycounter.tests" depends="register.custom.compilers,compile.module.moneycounter.production" description="compile module MoneyCounter; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.moneycounter" description="cleanup module">
+    <delete dir="${moneycounter.output.dir}"/>
+    <delete dir="${moneycounter.testoutput.dir}"/>
+  </target>
+</project>
